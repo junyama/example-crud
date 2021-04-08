@@ -20,7 +20,10 @@ class UserDto : public oatpp::DTO {
   DTO_FIELD(String, email, "email");
   DTO_FIELD(String, password, "password");
   DTO_FIELD(Enum<Role>::AsString, role, "role");
-
+    
+  DTO_FIELD(UInt32, userId);
+  DTO_FIELD(String, token);
+  DTO_FIELD(Boolean, saveImage);
 };
 
 #include OATPP_CODEGEN_END(DTO)

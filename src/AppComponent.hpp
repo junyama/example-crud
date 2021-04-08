@@ -2,6 +2,9 @@
 #ifndef AppComponent_hpp
 #define AppComponent_hpp
 
+#include "oatpp-libressl/server/ConnectionProvider.hpp"
+#include "oatpp-libressl/Config.hpp"
+
 #include "SwaggerComponent.hpp"
 #include "DatabaseComponent.hpp"
 
@@ -44,9 +47,27 @@ public:
   /**
    *  Create ConnectionProvider component which listens on the port
    */
+    /*
   OATPP_CREATE_COMPONENT(std::shared_ptr<oatpp::network::ServerConnectionProvider>, serverConnectionProvider)([] {
     return oatpp::network::tcp::server::ConnectionProvider::createShared({"0.0.0.0", 8000, oatpp::network::Address::IP_4});
   }());
+    */
+    
+   OATPP_CREATE_COMPONENT(std::shared_ptr<oatpp::network::ServerConnectionProvider>, serverConnectionProvider)([] {
+
+    OATPP_LOGD("oatpp::libressl::Config", "pem='%s'", CERT_PEM_PATH);
+    OATPP_LOGD("oatpp::libressl::Config", "crt='%s'", CERT_CRT_PATH);
+    auto config = oatpp::libressl::Config::createDefaultServerConfigShared(CERT_CRT_PATH, CERT_PEM_PATH /* private key */);
+
+    /**
+     * if you see such error:
+     * oatpp::libressl::server::ConnectionProvider:Error on call to 'tls_configure'. ssl context failure
+     * It might be because you have several ssl libraries installed on your machine.
+     * Try to make sure you are using libtls, libssl, and libcrypto from the same package
+     */
+
+    return oatpp::libressl::server::ConnectionProvider::createShared(config, {"0.0.0.0", 8443, oatpp::network::Address::IP_4});
+  }()); 
   
   /**
    *  Create Router component
