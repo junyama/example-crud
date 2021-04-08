@@ -1,4 +1,9 @@
 #include "Classifyer.hpp"
+
+//#include <iostream>
+//#include <vector>
+//#include <fstream>
+
 using namespace std;
 
 //Classifyer::Classifyer() {}
@@ -15,7 +20,15 @@ Classifyer::Classifyer(MyDictionary *myDictionary) {
     //add Halcon initalization code here
 }
 
-void Classifyer::execute(const char *jpegData) {
+void Classifyer::execute(char const *jpegData, int size) {
+    /*
+    ofstream myfile;
+    myfile.open("/home/xavier/test.jpeg");
+    for (int i =0; i < size; i++){
+        myfile << jpegData[i];
+    }
+    myfile.close();
+    */
     
     //Replace the following test() by the actual code invoking Halcon object detection function
     //The input is given by the parameter of this function

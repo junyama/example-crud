@@ -27,7 +27,7 @@ class Classifyer {
 
         Classifyer();
         Classifyer(MyDictionary* myDictionary);
-        void execute(const char* jpegData);
+        void execute(const char* jpegData, int size);
     
         
 };

@@ -21,6 +21,7 @@ add_library(${project_name}-lib
         src/ErrorHandler.cpp
         src/ErrorHandler.hpp
         
+        src/controller/MyController.hpp
         src/dto/MyDTOs.hpp
         src/halcon/Classifyer.hpp
         src/halcon/Classifyer.cpp

@@ -16,14 +16,30 @@ class UserDto : public oatpp::DTO {
   DTO_INIT(UserDto, DTO)
 
   DTO_FIELD(Int32, id);
-  DTO_FIELD(String, userName, "username");
-  DTO_FIELD(String, email, "email");
+  DTO_FIELD(String, userName, "unique-username");
+  DTO_FIELD(String, email, "unique@email.com");
   DTO_FIELD(String, password, "password");
   DTO_FIELD(Enum<Role>::AsString, role, "role");
     
   DTO_FIELD(UInt32, userId);
   DTO_FIELD(String, token);
   DTO_FIELD(Boolean, saveImage);
+};
+
+class UserAccountObj : public oatpp::DTO {
+
+  DTO_INIT(UserAccountObj, DTO)
+
+  DTO_FIELD(UInt32, userId);
+  DTO_FIELD(String, token);
+  DTO_FIELD(Boolean, saveImage);
+};
+
+class UserAccountListObj : public oatpp::DTO {
+
+  DTO_INIT(UserAccountListObj, DTO)
+
+  DTO_FIELD(List<Object<UserAccountObj>>, userAccountList); 
 };
 
 #include OATPP_CODEGEN_END(DTO)

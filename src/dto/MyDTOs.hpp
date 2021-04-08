@@ -29,11 +29,11 @@ class MessageDto : public oatpp::DTO {
   DTO_FIELD(String, message);
   
 };
-*/
+
 
 class UserAccountObj : public oatpp::DTO {
 
-  DTO_INIT(UserAccountObj, DTO /* extends */)
+  DTO_INIT(UserAccountObj, DTO)
 
   DTO_FIELD(UInt32, userId);
   DTO_FIELD(String, token);
@@ -42,10 +42,12 @@ class UserAccountObj : public oatpp::DTO {
 
 class UserAccountListObj : public oatpp::DTO {
 
-  DTO_INIT(UserAccountListObj, DTO /* extends */)
+  DTO_INIT(UserAccountListObj, DTO)
 
   DTO_FIELD(List<Object<UserAccountObj>>, userAccountList); 
 };
+
+*/
 
 class ServerConfigObj : public oatpp::DTO {
 
