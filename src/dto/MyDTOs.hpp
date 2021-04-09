@@ -12,25 +12,6 @@
  *  Used in API for serialization/deserialization and validation
  */
 /*
-class HelloDto : public oatpp::DTO {
-  
-  DTO_INIT(HelloDto, DTO)
-  
-  DTO_FIELD(String, userAgent, "user-agent");
-  DTO_FIELD(String, message);
-  DTO_FIELD(String, server);
-  
-};
-
-class MessageDto : public oatpp::DTO {
-  
-  DTO_INIT(MessageDto, DTO)
-  
-  DTO_FIELD(String, message);
-  
-};
-
-
 class UserAccountObj : public oatpp::DTO {
 
   DTO_INIT(UserAccountObj, DTO)
@@ -47,16 +28,14 @@ class UserAccountListObj : public oatpp::DTO {
   DTO_FIELD(List<Object<UserAccountObj>>, userAccountList); 
 };
 
-*/
-
 class ServerConfigObj : public oatpp::DTO {
 
-  DTO_INIT(ServerConfigObj, DTO /* extends */)
+  DTO_INIT(ServerConfigObj, DTO)
 
   DTO_FIELD(Boolean, saveImage);
   DTO_FIELD(List<Object<UserAccountObj>>, userList); 
 };
-
+*/
 class BoundingBoxObj : public oatpp::DTO {
 
   DTO_INIT(BoundingBoxObj, DTO /* extends */)

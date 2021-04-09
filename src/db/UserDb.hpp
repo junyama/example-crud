@@ -29,8 +29,10 @@ public:
 
   QUERY(createUser,
         "INSERT INTO AppUser"
-        "(username, email, password, role) VALUES "
-        "(:user.username, :user.email, :user.password, :user.role);",
+        "(username, email, password, role, saveImage) VALUES "
+        //"(username, email, password, role) VALUES "
+        "(:user.username, :user.email, :user.password, :user.role, :user.saveImage);",
+        //"(:user.username, :user.email, :user.password, :user.role);",
         PARAM(oatpp::Object<UserDto>, user))
 
   QUERY(updateUser,

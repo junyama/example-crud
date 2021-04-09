@@ -2,7 +2,6 @@
 #ifndef MY_CONTROLLER_HPP
 #define MY_CONTROLLER_HPP
 
-#define USER_ACCOUNT_FILE_PATH "/home/xavier/github/example-crud/conf.d/users.json"
 #define IMAGE_FILE_PATH "/home/xavier/github/example-crud/image/"
 
 #include "oatpp/web/server/api/ApiController.hpp"
@@ -11,6 +10,8 @@
 #include "oatpp/core/macro/component.hpp"
 
 #include "dto/MyDTOs.hpp"
+#include "dto/UserDto.hpp"
+
 #include "halcon/Classifyer.hpp"
 #include "halcon/MyDictionary.cpp"
 
@@ -19,6 +20,8 @@
 #include <sys/time.h>
 #include <ctime>
 
+#include "service/UserService.hpp"
+
 #include OATPP_CODEGEN_BEGIN(ApiController) //<- Begin Codegen
 
 using namespace oatpp::web::server::handler;
@@ -26,9 +29,11 @@ using namespace oatpp::web::server::handler;
 class MyController : public oatpp::web::server::api::ApiController {
 private:
     constexpr static const char* TAG = "MyController";
-    constexpr static const char* userAcountfilePath = USER_ACCOUNT_FILE_PATH;
+    //constexpr static const char* userAcountfilePath = USER_ACCOUNT_FILE_PATH;
     MyDictionary myDictionary;
-    oatpp::data::mapping::type::DTOWrapper<UserAccountListObj> userAccountListObj;
+    //oatpp::data::mapping::type::DTOWrapper<UserAccountListObj> userAccountListObj;
+    
+    UserService m_userService; // Create user service.
     
     static uint miliSecTime() {
         using std::cout; using std::endl;
@@ -38,7 +43,7 @@ private:
         using std::chrono::system_clock;
         return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
     }
-    
+    /*
     oatpp::String getToken(oatpp::data::mapping::type::DTOWrapper<UserAccountListObj> userAccountListObj, UInt32 userId) {
         for (int i = 0; i < userAccountListObj->userAccountList->size(); i++) {
             if (userAccountListObj->userAccountList[i]->userId == userId) {
@@ -56,18 +61,26 @@ private:
             }
         }
     }
+    */
+    oatpp::data::mapping::type::DTOWrapper<UserDto> getUserObj(UInt32 userId) {
+        //Int32 userId_ = userId;
+        auto userDto = m_userService.getUserById(*userId);
+        OATPP_LOGD(TAG, "username = %s, email = %s", userDto->userName->c_str(), userDto->email->c_str());
+        return userDto;
+    }
 
 public:
   MyController(const std::shared_ptr<ObjectMapper>& objectMapper)
     : oatpp::web::server::api::ApiController(objectMapper)
   {
+        /*
         auto jsonObjectMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
         if (oatpp::String jsonStr = oatpp::base::StrBuffer::loadFromFile(userAcountfilePath)) {
             OATPP_LOGD(TAG, "Reading from %s", userAcountfilePath);
             OATPP_LOGD(TAG, "User Account = %s", jsonStr->c_str());
             userAccountListObj = jsonObjectMapper->readFromString<oatpp::Object<UserAccountListObj>>(jsonStr);
         } else OATPP_LOGD(TAG, "%s NOT existing", userAcountfilePath);
-        
+        */
         setDefaultAuthorizationHandler(std::make_shared<BearerAuthorizationHandler>("my-realm"));
     }
 public:
@@ -77,30 +90,20 @@ public:
   ){
     return std::make_shared<MyController>(objectMapper);
   }
-/*
-  ENDPOINT("GET", "/", root) {
-    const char* html =
-      "<html lang='en'>"
-      "  <head>"
-      "    <meta charset=utf-8/>"
-      "  </head>"
-      "  <body>"
-      "    <p>Hello CRUD example project!</p>"
-      "    <a href='swagger/ui'>Checkout Swagger-UI page</a>"
-      "  </body>"
-      "</html>";
-    auto response = createResponse(Status::CODE_200, html);
-    response->putHeader(Header::CONTENT_TYPE, "text/html");
-    return response;
-  }
-  */  
+    
   ENDPOINT("POST", "/detectObject/{userId}", detectObject, BODY_STRING(String, jpegData), PATH(UInt32, userId), AUTHORIZATION(std::shared_ptr<DefaultBearerAuthorizationObject>, authObject)) {
-      OATPP_LOGD(TAG, "token = %s", getToken(userAccountListObj, userId)->c_str());
+      //OATPP_LOGD(TAG, "token = %s", getToken(userAccountListObj, userId)->c_str());
       //OATPP_ASSERT_HTTP(authObject->token == getToken(userAccountListObj, userId), Status::CODE_401, "Unauthorized");
-      auto  usrAccountObj = getUserAccountObj(userAccountListObj, userId);
-      OATPP_ASSERT_HTTP(authObject->token == usrAccountObj->token, Status::CODE_401, "Unauthorized");
+      //auto  usrAccountObj = getUserAccountObj(userAccountListObj, userId);
       
-      if (usrAccountObj->saveImage) {
+      auto userObj = getUserObj(userId);
+      auto jsonObjectMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
+      auto jsonStr = jsonObjectMapper->writeToString(userObj); 
+      OATPP_LOGD(TAG, "userObj = %s", jsonStr->c_str());
+      
+      OATPP_ASSERT_HTTP(authObject->token == userObj->password, Status::CODE_401, "Unauthorized");
+      
+      if (userObj->saveImage == "true") {
         std::string filePath = IMAGE_FILE_PATH;
         filePath = filePath + std::to_string(*userId) + "-" + std::to_string(miliSecTime()) + ".jpeg";
         jpegData->saveToFile(filePath.c_str());
